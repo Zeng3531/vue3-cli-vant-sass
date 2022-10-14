@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+</body>
+<script>
+    let person = {
+        name: '张三',
+        age: 18
+    }
+    console.log('person', person);
+    // 模拟vue3中实现响应式__
+    const p = new Proxy(person, {
+        // 有人读取p身上的属性时 调用
+        get(target, personName) {
+            console.log(`有人读取p身上的${personName}属性`);
+            // return target[personName]
+            return Reflect.get(target, personName)
+        },
+        // 有三个值 
+        // 有人修改p身上的属性时 || 增加某个属性时 调用 
+        set(target, personName, value) {
+            console.log(`有人修改了p身上的${personName}属性,我要去更新页面了`);
+            // return target[personName] = value
+            return Reflect.set(target, personName, value)
+        },
+        // 删除
+        // 有人删除p身上的属性时 调用 
+        deleteProperty(target, personName) {
+            console.log(`有人删除了p身上的${personName}属性,我要去更新页面了`);
+            // return delete target[personName]
+            return Reflect.deleteProperty(target, personName)
+        }
+    })
+    console.log(p);
+
+    let obj = {
+        a: 1,
+        b: 2,
+    }
+
+    //通过Object.defineProperty 来访问 有错处了就不在执行了 不利用框架的开发
+    Object.defineProperty(obj, 'c', {
+        get() {
+            return 100
+            console.log(obj, '有人读取了c');
+        }
+    })
+
+    //通过Reflect.defineProperty 来访问 有错处了会返回出来 还能往下一步执行 
+    const x1 = Reflect.defineProperty(obj, 'c', {
+        get() {
+            return 100
+
+        }
+    })
+    console.log('111111', x1);
+
+    const x2 = Reflect.defineProperty(obj, 'c', {
+        get() {
+            return 200
+        }
+    })
+    console.log('22222', x2);
+
+</script>
+
+</html>
